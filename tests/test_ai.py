@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from py_simple.easy_ai import summarize_text, EasyAIError
+from py_simple.easy_ai import summarize_text, translate_text, EasyAIError
 
 
 def test_summarize_text_success():
@@ -25,3 +25,14 @@ def test_summarize_text_error():
         summarize_text(mock_model, "Some text")
 
     assert "Model timeout" in str(exc_info.value)
+def test_translate_text(monkeypatch):
+    class MockResponse:
+        content = "Hola mundo"
+
+    class MockModel:
+        def invoke(self, question):
+            return MockResponse()
+
+    model = MockModel()
+    result = translate_text(model, "Hello world", "Spanish")
+    assert result == "Hola mundo"
